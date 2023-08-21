@@ -17,8 +17,7 @@ one = do
   -- Sum every [Integer] inside [[Integer]]
   let sums = sortBy (comparing Down) (map sum splittedInt)
 
-  -- Print the top 5 elves
-  print $ take 5 sums
+  print $ head sums
   putStrLn "1st part DONE"
   -- Print the sum of the top 3 elves
   print $ sum $ take 3 sums
@@ -46,4 +45,15 @@ three :: IO ()
 three = do
   putStrLn "\n## DAY 03 ##"
   input <- readFile "inputs/03.txt"
+  let splitted = splitWithDelimiter input '\n'
+  let rucksack = map halfString splitted
+  let letter = map rucksackLetter rucksack
+  let points = map letterPoint letter
+  -- print $ zip letter points
+  print $ sum points
   putStrLn "1st part DONE"
+
+  let points' = rucksackGroupScroll splitted
+  print points'
+  putStrLn "2nd part DONE"
+
