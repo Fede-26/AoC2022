@@ -11,10 +11,16 @@ module Lib
     rucksackLetter,
     rucksackGroupScroll,
     pairSplit,
+    parseCrates,
+    execCrateInstruction,
+    parseCrateInstruction,
+    replaceNth,
+    execCrateInstruction',
   )
 where
 
-import Data.Char (isAsciiLower, ord)
+import Data.Char (isAsciiLower, isNumber, ord)
+import Data.List (transpose)
 
 -- DAY 01
 
@@ -102,3 +108,41 @@ pairSplit xs =
    in strangeSplit $ map (map read) pairs
   where
     strangeSplit xs' = ((head $ head xs', head $ tail $ head xs'), (head $ head $ tail xs', head $ tail $ head $ tail xs')) -- This strange stuff does this [[Integer, Integer], [Integer, Integer]] -> ((Integer, Integer), (Integer, Integer))
+
+-- DAY 05
+
+parseCrates :: [String] -> [[Char]]
+parseCrates xs = map head . takeWhile (not.null) $ iterate(drop 4) $ tail $ map (dropWhile(== ' ')) $ transpose xs
+
+parseCrateInstruction :: String -> (Integer, Integer, Integer)
+parseCrateInstruction xs = case words xs of
+  [_, quantity, _, from, _, to] -> (read quantity, read from, read to)
+
+execCrateInstruction :: (Integer, Integer, Integer) -> [[Char]] -> [[Char]]
+execCrateInstruction (0, _, _) crates = crates
+execCrateInstruction (qnt, from', to') crates =
+  let from = from' - 1
+      to = to' - 1
+      takeColumn = crates !! fromIntegral from
+      putColumn = crates !! fromIntegral to
+      crateToMove = head takeColumn
+      newTakeColumn = tail takeColumn
+      newPutColumn = crateToMove : putColumn
+   in execCrateInstruction (qnt - 1, from', to') $ replaceNth from newTakeColumn $ replaceNth to newPutColumn crates
+
+execCrateInstruction' :: (Integer, Integer, Integer) -> [[Char]] -> [[Char]]
+execCrateInstruction' (qnt, from', to') crates =
+  let from = from' - 1
+      to = to' - 1
+      takeColumn = crates !! fromIntegral from
+      putColumn = crates !! fromIntegral to
+      crateToMove = take (fromIntegral qnt) takeColumn
+      newTakeColumn = drop (fromIntegral qnt) takeColumn
+      newPutColumn = crateToMove ++ putColumn
+   in replaceNth from newTakeColumn $ replaceNth to newPutColumn crates
+
+replaceNth :: Integer -> a -> [a] -> [a]
+replaceNth _ _ [] = []
+replaceNth n newVal (x : xs)
+  | n == 0 = newVal : xs
+  | otherwise = x : replaceNth (n - 1) newVal xs

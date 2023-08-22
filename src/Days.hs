@@ -63,9 +63,26 @@ four = do
   input <- readFile "inputs/04.txt"
   let splitted = splitWithDelimiter input '\n'
   let splittedFmt = map pairSplit splitted
+
   let contained = filter (\((a, b), (c, d)) -> (a <= c && b >= d) || (a >= c && b <= d)) splittedFmt
   print $ length contained
   putStrLn "1st part DONE"
+
   let overlap = filter (\((a, b), (c, d)) -> (a <= c && b >= c) || (c <= a && d >= a)) splittedFmt
   print $ length overlap
+  putStrLn "2nd part DONE"
+
+five :: IO ()
+five = do
+  putStrLn "\n## DAY 05 ##"
+  input <- readFile "inputs/05.txt"
+  let splitted = lines input
+  let crates = parseCrates $ take 8 splitted
+  let instructions = map parseCrateInstruction $ drop 10 splitted
+  let endCrates = foldl (\cr inst -> execCrateInstruction inst cr) crates instructions
+
+  print $ foldl (\acc xs -> acc ++ [head xs]) "" endCrates
+  putStrLn "1st part DONE"
+  let endCrates' = foldl (\cr inst -> execCrateInstruction' inst cr) crates instructions
+  print $ foldl (\acc xs -> acc ++ [head xs]) "" endCrates'
   putStrLn "2nd part DONE"

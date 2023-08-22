@@ -9,3 +9,4 @@ main = do
     Days.two
     Days.three
     Days.four
+    Days.five
