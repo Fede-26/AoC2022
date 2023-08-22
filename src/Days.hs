@@ -1,6 +1,6 @@
 module Days where
 
-import Data.List (sort, sortBy)
+import Data.List (sortBy)
 import Data.Ord (Down (Down), comparing)
 import Lib
 
@@ -57,3 +57,15 @@ three = do
   print points'
   putStrLn "2nd part DONE"
 
+four :: IO ()
+four = do
+  putStrLn "\n## DAY 04 ##"
+  input <- readFile "inputs/04.txt"
+  let splitted = splitWithDelimiter input '\n'
+  let splittedFmt = map pairSplit splitted
+  let contained = filter (\((a, b), (c, d)) -> (a <= c && b >= d) || (a >= c && b <= d)) splittedFmt
+  print $ length contained
+  putStrLn "1st part DONE"
+  let overlap = filter (\((a, b), (c, d)) -> (a <= c && b >= c) || (c <= a && d >= a)) splittedFmt
+  print $ length overlap
+  putStrLn "2nd part DONE"

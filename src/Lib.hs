@@ -10,6 +10,7 @@ module Lib
     letterPoint,
     rucksackLetter,
     rucksackGroupScroll,
+    pairSplit,
   )
 where
 
@@ -73,7 +74,7 @@ rpsRoundPoints (a, b)
       6 + rpsToInt b -- Win
   | otherwise = 0 + rpsToInt b -- Loss
 
--- Day 03
+-- DAY 03
 
 halfString :: String -> (String, String)
 halfString xs = splitAt len xs
@@ -87,8 +88,17 @@ rucksackLetter :: (String, String) -> Char
 rucksackLetter (a, b) = foldr (\x acc -> if x `elem` b then x else acc) '\0' a
 
 rucksackGroupLetter :: String -> String -> String -> Char
-rucksackGroupLetter a b c = rucksackLetter(foldr (\x acc -> if x `elem` c then x:acc else acc) [] b, a)
+rucksackGroupLetter a b c = rucksackLetter (foldr (\x acc -> if x `elem` c then x : acc else acc) [] b, a)
 
 rucksackGroupScroll :: [String] -> Integer
 rucksackGroupScroll [] = 0
 rucksackGroupScroll (a : b : c : xs) = letterPoint (rucksackGroupLetter a b c) + rucksackGroupScroll xs
+
+-- DAY 04
+
+pairSplit :: String -> ((Integer, Integer), (Integer, Integer))
+pairSplit xs =
+  let pairs = map (`splitWithDelimiter` '-') $ splitWithDelimiter xs ','
+   in strangeSplit $ map (map read) pairs
+  where
+    strangeSplit xs' = ((head $ head xs', head $ tail $ head xs'), (head $ head $ tail xs', head $ tail $ head $ tail xs')) -- This strange stuff does this [[Integer, Integer], [Integer, Integer]] -> ((Integer, Integer), (Integer, Integer))

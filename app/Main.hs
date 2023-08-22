@@ -8,3 +8,4 @@ main = do
     Days.one
     Days.two
     Days.three
+    Days.four
